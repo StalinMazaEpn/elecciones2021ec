@@ -7,11 +7,15 @@ const routes: Routes = [
     path: '',
     redirectTo: 'elecciones',
     pathMatch: 'full',
-},
-{
+  },
+  {
     path: 'elecciones',
     component: AppComponent,
-},
+  },
+  {
+    path: '**',
+    redirectTo: '/elecciones'
+  }
 ];
 
 @NgModule({
