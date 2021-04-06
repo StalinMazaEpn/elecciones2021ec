@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
+import { EleccionesPrimeraVueltaComponent } from './pages/elecciones-primera-vuelta/elecciones-primera-vuelta.component';
+import { EleccionesSegundaVueltaComponent } from './pages/elecciones-segunda-vuelta/elecciones-segunda-vuelta.component';
 
 const routes: Routes = [
   {
@@ -10,7 +12,11 @@ const routes: Routes = [
   },
   {
     path: 'elecciones',
-    component: AppComponent,
+    component: EleccionesPrimeraVueltaComponent,
+  },
+  {
+    path: 'elecciones-segunda-vuelta',
+    component: EleccionesSegundaVueltaComponent,
   },
   {
     path: '**',
