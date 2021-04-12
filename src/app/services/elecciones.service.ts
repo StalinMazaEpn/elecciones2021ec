@@ -11,11 +11,13 @@ import { catchError, mergeMap, retryWhen, take } from "rxjs/operators";
   providedIn: "root"
 })
 export class EleccionesService {
+  public urlSegunda: string;
   public url: string;
 
   constructor(protected http: HttpClient) {
     this.url = "https://stalinmazadev-default-rtdb.firebaseio.com/elecciones2021ec.json";
-    // this.url = "https://resultados2021.cne.gob.ec/Home/ConsultarResultados";
+    this.urlSegunda = "https://stalinmazadev-default-rtdb.firebaseio.com/elecciones2021ec_segundavuelta.json";
+    // this.urlSegunda = "https://resultados2021.cne.gob.ec/Home/ConsultarResultados";
   }
 
   getDataApiCNE() {
@@ -43,6 +45,11 @@ export class EleccionesService {
 
   getDataApi() {
     return this.http.get(this.url).pipe(catchError(()=>{
+      return of({data: []})
+    }));
+  }
+  getDataApiSegunda() {
+    return this.http.get(this.urlSegunda).pipe(catchError(()=>{
       return of({data: []})
     }));
   }

@@ -1,49 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from "@angular/platform-browser";
+import { Subscription } from 'rxjs';
+import { ICNERequest } from 'src/app/models';
 import { EleccionesService } from "src/app/services/elecciones.service";
-
-interface ICNERequest {
-  datos: Dato[];
-  fechaCorte: string;
-  viewProcesamiento: string;
-  conInformacion: boolean;
-}
-
-interface Dato {
-  strNomPartido: string;
-  strNomLista: string;
-  strNomCandidato: string;
-  intVotos: number;
-  intVotosM: number;
-  intVotosH: number;
-  intOrdCandidato: number;
-  porcentaje?: number;
-  porcentajeReal?: number;
-  porcentajeRealStr?: string;
-}
-
-function escapeRegExp(string) {
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-}
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-}
-
+import { replaceAll } from 'src/app/shared/utils';
+import { IDatoCNE } from '../../models/index';
 
 @Component({
   selector: 'app-elecciones-primera-vuelta',
   templateUrl: './elecciones-primera-vuelta.component.html',
   styleUrls: ['./elecciones-primera-vuelta.component.scss']
 })
-export class EleccionesPrimeraVueltaComponent implements OnInit {
+export class EleccionesPrimeraVueltaComponent implements OnInit, OnDestroy {
 
-  name = "Angular Pipes por Stalin Maza";
-  fechaHoy = Date.now();
+  fechaHoy: Date = new Date("2021/02/07 17:00:00");
   dataEleccionesVotos = 0;
-  dataElecciones = [];
+  diferenciaVotos = 0;
+  diferenciaPorcentaje = 0;
+  dataElecciones: IDatoCNE[] = [];
   loading = false;
   fechaCorte = '';
   datosEstadisticos: any = null;
+  suscription = new Subscription();
   constructor(
     private eleccionesService: EleccionesService,
     private sanitizer: DomSanitizer
@@ -52,10 +30,12 @@ export class EleccionesPrimeraVueltaComponent implements OnInit {
   ngOnInit() {
     this.cargarDatos();
   }
-
+  ngOnDestroy(){
+    this.suscription.unsubscribe();
+  }
   cargarDatos() {
     this.loading = true;
-    this.eleccionesService.getDataApi().subscribe((data: ICNERequest) => {
+    this.suscription = this.eleccionesService.getDataApi().subscribe((data: ICNERequest) => {
       //vonsole.log('data', data)
 
       this.mapDataFromApi(data);
@@ -81,7 +61,7 @@ export class EleccionesPrimeraVueltaComponent implements OnInit {
       candidato.porcentaje = parseFloat(candidato.porcentajeRealStr);
       return candidato;
     });
-    this.dataElecciones
+    this.dataElecciones = this.dataElecciones
       .sort(function (a, b) {
         const keyA = a.porcentaje,
           keyB = b.porcentaje;
@@ -91,6 +71,12 @@ export class EleccionesPrimeraVueltaComponent implements OnInit {
         return 0;
       })
       .reverse();
+
+    this.diferenciaVotos = this.dataElecciones[0]?.intVotos -
+      this.dataElecciones[1]?.intVotos;
+    this.diferenciaPorcentaje = this.dataElecciones[0]?.porcentaje -
+      this.dataElecciones[1]?.porcentaje;
+    this.diferenciaPorcentaje = parseFloat(this.diferenciaPorcentaje.toFixed(2))
   }
 
 }

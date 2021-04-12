@@ -1,3 +1,6 @@
+body {
+    font-display: swap;
+}
 /* You can add global styles to this file, and also import other style files */
 .tablaActProIn {
     width: 100%;
@@ -16,4 +19,8 @@ h2 {
 }
 p {
     margin: 0;
+}
+
+#tdActasPor {
+    font-weight: bold;
 }

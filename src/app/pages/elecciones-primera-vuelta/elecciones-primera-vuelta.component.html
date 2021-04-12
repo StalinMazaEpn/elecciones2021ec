@@ -1,39 +1,56 @@
 <div class="container text-center">
-  <h3>Primera Vuelta Fecha: {{fechaCorte}}</h3>
-  <button type="button" class="my-3 btn btn-success" (click)="cargarDatos()">
-    Cargar Datos
-  </button>
+  <h2>Segunda Vuelta</h2>
+  <p class="my-3">Fecha de Corte: {{fechaCorte}}</p>
+  <ng-container *ngIf="!loading && dataElecciones.length > 0">
+    <div class="my-3">
+      <p>El ganador de la primera vuelta en Ecuador fue el candidato {{dataElecciones[0].strNomCandidato}} con un
+        porcentaje del
+        {{dataElecciones[0]?.porcentaje}} % y con una diferencia de {{ diferenciaVotos }} ({{ diferenciaPorcentaje }} %) votos sobre el candidato {{dataElecciones[1]?.strNomCandidato}}.</p>
+    </div>
+  </ng-container>
 </div>
 
 <app-loading *ngIf="loading"></app-loading>
 
 <div class="row m-2" *ngIf="!loading">
+
+
   <div *ngIf="dataElecciones.length == 0">
     No hay resultados disponibles
   </div>
-  <div class="col-1 col-sm-2 col-md-3 col-lg-4 mx-2 my-2 card" style="width: 18rem;"
-    *ngFor="let candidato of dataElecciones">
-    <div class="card-header">
-      <div class="progress" [title]="candidato.porcentaje+' %'">
-        <div class="progress-bar" role="progressbar" [style.width.%]="candidato.porcentaje"
-          [attr.aria-valuenow]="candidato.porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+  <ng-container *ngIf="dataElecciones.length > 0">
+    <div class="col-1 col-sm-2 col-md-3 col-lg-4 mx-2 my-2 card" style="width: 18rem;"
+      *ngFor="let candidato of dataElecciones">
+      <div class="card-header">
+        <div class="progress" [title]="candidato.porcentaje+' %'">
+          <div class="progress-bar" role="progressbar" [attr.aria-label]="'Porcentaje de Voto para el candidato: '+candidato.strNomCandidato" [title]="'Porcentaje de Voto para el candidato: '+candidato.strNomCandidato" [style.width.%]="candidato.porcentaje"
+            [attr.aria-valuenow]="candidato.porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title">
+          {{candidato.strNomCandidato}}
+          <span class="badge bg-info">{{candidato.porcentaje}} %</span>
+        </h4>
+        <p class="card-text">
+          Es el candidato del partido {{candidato.strNomPartido}}
+        </p>
+      </div>
+      <div class="card-footer">
+        <span style="margin-right: 4px;">Nº Votos:</span> <span style="font-weight: bold">{{candidato.intVotos}}</span>
       </div>
     </div>
-    <div class="card-body">
-      <h5 class="card-title">
-        {{candidato.strNomCandidato}}
-        <span class="badge bg-info">{{candidato.porcentaje}} %</span>
-      </h5>
-      <p class="card-text">
-        Es el candidato del partido {{candidato.strNomPartido}}
-      </p>
-    </div>
-    <div class="card-footer">
-      <span style="margin-right: 4px;">Nº Votos:</span> <span style="font-weight: bold">{{candidato.intVotos}}</span>
-    </div>
-  </div>
-  <h4 class="mt-2">Datos Estadisticos</h4>
-  <div class="mb-4 mt-2" [innerHTML]="datosEstadisticos">
+    <h3 class="mt-2">Datos Estadisticos</h3>
+    <div class="mb-4 mt-2" [innerHTML]="datosEstadisticos">
 
-  </div>
+    </div>
+  </ng-container>
+
+</div>
+
+
+<div class="fluid-container text-center">
+  <button type="button" class="my-3 btn btn-success" (click)="cargarDatos()">
+    Cargar Datos
+  </button>
 </div>
